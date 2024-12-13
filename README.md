@@ -14,7 +14,7 @@ This repository documents my journey through the "Generative AI for Developers" 
 
 | Date       | Timestamp & Link                                                   | Notes                                                       |
 | ---------- | ------------------------------------------------------------------ | ----------------------------------------------------------- |
-| 10/12/2024 | 0                                                                  | Identified course and did 30 minutes.                       |
+| 10/12/2024 | 0                                                                  | Identified course and added to Notion as project.           |
 | 13/12/2024 | [1:03:23](https://youtu.be/F0GQ0l2NfHA?si=fPiIwHImoSM9E-SY&t=3803) | Completed notes on introduction and Generative AI pipeline. |
 
 ## Detailed Course Notes
