@@ -130,7 +130,7 @@ Let’s dive into each step of the pipeline in detail.
 
 ---
 
-- **1. Data Acquisition**
+- # **1. Data Acquisition**
 
   This is the starting point for any AI pipeline. It involves gathering raw data that the model will use for training. The type and quality of data directly impact the performance of the AI system.
 
