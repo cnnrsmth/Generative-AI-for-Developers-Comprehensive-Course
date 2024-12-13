@@ -8,6 +8,15 @@
 
 This repository documents my journey through the "Generative AI for Developers" course by freeCodeCamp.org. The course provides an in-depth exploration of generative AI, covering topics such as large language models, data preprocessing, fine-tuning, Retrieval-Augmented Generation (RAG), and hands-on projects utilizing tools like Hugging Face, OpenAI, and LangChain.
 
+---
+
+### **Progress Tracking**
+
+| Date       | Timestamp & Link                                                   | Notes                                                       |
+| ---------- | ------------------------------------------------------------------ | ----------------------------------------------------------- |
+| 10/12/2024 | 0                                                                  | Identified course and did 30 minutes.                       |
+| 13/12/2024 | [1:03:23](https://youtu.be/F0GQ0l2NfHA?si=fPiIwHImoSM9E-SY&t=3803) | Completed notes on introduction and Generative AI pipeline. |
+
 ## Detailed Course Notes
 
 <details>
