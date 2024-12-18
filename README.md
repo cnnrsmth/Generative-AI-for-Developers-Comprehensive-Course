@@ -12,7 +12,7 @@ This repository documents my journey through the "Generative AI for Developers" 
 
 ### **Progress Tracking**
 
-| Date       | Timestamp & Link                                                   | Notes                                                       |
+| Date       | Timestamp                                                          | Notes                                                       |
 | ---------- | ------------------------------------------------------------------ | ----------------------------------------------------------- |
 | 10/12/2024 | 0                                                                  | Identified course and added to Notion as project.           |
 | 13/12/2024 | [1:03:23](https://youtu.be/F0GQ0l2NfHA?si=fPiIwHImoSM9E-SY&t=3803) | Completed notes on introduction and Generative AI pipeline. |
@@ -1039,12 +1039,7 @@ For a movie-synopsis generator:
 
 1. Downloaded the IMDB dataset using the Kaggle API.
 2. Extracted the dataset into the working directory.
-3. Loaded the dataset into a Pandas DataFrame:
-   ```python
-   import pandas as pd
-   df = pd.read_csv('IMDB Dataset.csv')
-   print(df.head())
-   ```
+3. Loaded the dataset into a Pandas DataFrame.
 
 **Why It’s Done:**
 
@@ -1063,10 +1058,7 @@ Preprocessing cleans and standardizes raw text data, ensuring it is ready for em
 
 **What I Did:**
 
-- Converted all text in the DataFrame to lowercase:
-  ```python
-  df['review'] = df['review'].str.lower()
-  ```
+- Converted all text in the DataFrame to lowercase.
 
 **Why It’s Done:**
 
@@ -1267,5 +1259,262 @@ The choice between stemming and lemmatization depends on the task requirements, 
    - [Text Preprocessing Part 2](../Notebooks/text-preprocessing-part-2.ipynb)
 
 ---
+
+</details>
+
+<details>
+<summary>Data Representation / Vectorisation</summary>
+# **Data Representation and Vectorization**
+
+---
+
+## **1. Introduction to Data Representation**
+
+### **1.1 Why Data Representation Is Necessary**
+
+- Machine Learning (ML) and Deep Learning models are **mathematical functions** that operate on **numerical inputs**.
+- **Unstructured data**—such as text, images, and audio—cannot be directly processed because it is not inherently numerical.
+- The process of transforming unstructured data into numerical representations is called **data representation** or **vectorization**.
+
+### **1.2 Challenges of Representing Data**
+
+1. **Inconsistent Input Sizes**:
+
+   - Text: Sentences have varying lengths (e.g., 3 words vs. 10 words).
+   - Images: Images can have different resolutions.
+   - Audio: Duration varies across audio files.
+
+2. **Loss of Semantic Meaning**:
+
+   - Simple representations (like word counts) fail to capture relationships between words, such as synonyms.
+
+3. **High Dimensionality**:
+   - Large vocabularies or image sizes lead to large vectors, increasing computational cost.
+
+The goal is to convert unstructured data into **efficient and meaningful numerical representations**.
+
+---
+
+## **2. Text Data Representation**
+
+Text is one of the most complex data types for vectorization due to its **unstructured nature** and **semantic richness**. Techniques for text vectorization progress from simple representations to advanced embeddings.
+
+---
+
+### **2.1 One-Hot Encoding**
+
+**What It Is**:
+
+- Each word is represented as a **binary vector** of size \(N\) (total unique words in the corpus).
+- Each word has a **unique position** in the vector:
+  - 1 if the word exists.
+  - 0 otherwise.
+
+**Example**:  
+For a vocabulary `["I", "like", "learning", "NLP"]`:
+
+- "I" → `[1, 0, 0, 0]`
+- "NLP" → `[0, 0, 0, 1]`
+
+**Advantages**:
+
+- Simple and intuitive.
+
+**Drawbacks**:
+
+- **No Semantic Relationships**: "dog" and "cat" are unrelated.
+- **High Dimensionality**: Large vocabularies result in sparse, inefficient vectors.
+- **Out-of-Vocabulary (OOV)**: Cannot represent unseen words.
+
+**Use Case**:
+
+- Suitable for small datasets or simple rule-based models.
+
+---
+
+### **2.2 Bag-of-Words (BoW)**
+
+**What It Is**:
+
+- Represents text as a vector of **word frequencies** in a document.
+
+**Example**:  
+For sentences:
+
+- D1: "I like NLP"
+- D2: "NLP is fun NLP"
+
+Vocabulary: ["I", "like", "learning", "NLP", "is", "fun"]
+
+Vectors:
+
+- D1 → `[1, 1, 1, 0, 0]`
+- D2 → `[0, 0, 2, 1, 1]`
+
+**Advantages**:
+
+- Reduces sparsity compared to One-Hot Encoding.
+- Highlights important words through frequency.
+
+**Drawbacks**:
+
+- **Ignores Word Order**: "I love NLP" and "NLP love I" are the same.
+- **No Semantic Meaning**: Doesn’t understand relationships or grammar.
+
+**Use Case**:
+
+- Text classification (e.g., sentiment analysis).
+
+---
+
+### **2.3 TF-IDF (Term Frequency-Inverse Document Frequency)**
+
+**What It Is**:
+
+- Assigns weights to words based on their importance:
+  - **Term Frequency (TF):** Frequency of a word in the document.
+  - **Inverse Document Frequency (IDF):** Reduces the weight of common words across documents.
+
+**Formula**:  
+\[
+\text{TF-IDF} = \text{TF}(word) \times \log\left(\frac{\text{Total Documents}}{\text{Documents Containing Word}}\right)
+\]
+
+**Advantages**:
+
+- Highlights **rare and significant words**.
+- Reduces the impact of common, low-information words (e.g., "the", "is").
+
+**Drawbacks**:
+
+- Still ignores word order and semantics.
+
+**Use Case**:
+
+- Search engines and information retrieval.
+
+---
+
+### **2.4 Word Embeddings (Word2Vec, GloVe)**
+
+**What It Is**:  
+Word embeddings represent words as **dense, low-dimensional vectors** where similar words have similar representations.
+
+#### **Word2Vec**
+
+- **CBOW**: Predicts a word based on its surrounding context.
+- **Skip-Gram**: Predicts surrounding context based on a given word.
+
+**Example**:
+
+- "King" - "Man" + "Woman" ≈ "Queen"
+
+**Advantages**:
+
+- Captures semantic relationships (e.g., synonyms).
+- Efficient, low-dimensional representation.
+
+**Limitations**:
+
+- Static embeddings (word meaning doesn’t change with context).
+
+---
+
+#### **GloVe (Global Vectors)**
+
+**What It Is**:
+
+- Combines global word co-occurrence statistics with local context to produce embeddings.
+
+**Why It Works**:
+
+- Words that co-occur with similar words (e.g., "king" and "queen" co-occurring with "crown") are placed close in vector space.
+
+---
+
+### **2.5 Transformers and Contextual Embeddings**
+
+**What It Is**:
+
+- Transformer-based models (e.g., **BERT**, **GPT**) produce **contextual embeddings**.
+- Word representations depend on their usage in context.
+
+**Key Mechanism**:
+
+- **Self-Attention**: Weighs relationships between all words in a sentence to understand context.
+
+**Example**:
+
+- "He went to the **bank** to deposit money."
+- "The river **bank** was flooded."
+  - The word "bank" will have different vector representations.
+
+**Advantages**:
+
+- Captures both **semantic** and **contextual meaning**.
+- State-of-the-art for NLP tasks like text classification, summarization, and generation.
+
+---
+
+## **3. Image Data Representation**
+
+Images are represented as grids of **pixels**.
+
+### **Techniques**:
+
+1. **Pixel Flattening**:
+
+   - Convert a 2D image (e.g., 28x28) into a **1D vector** of size 784.
+   - Suitable for simple models.
+
+2. **Convolutional Neural Networks (CNNs)**:
+   - Automatically extract **spatial features** like edges, textures, and patterns.
+   - CNNs retain spatial relationships between pixels, unlike flattening.
+
+---
+
+## **4. Audio Data Representation**
+
+Audio signals are numerical waveforms.
+
+### **Techniques**:
+
+1. **Spectrograms**:
+
+   - Converts audio into a **visual representation** of frequency over time.
+
+2. **MFCC (Mel-Frequency Cepstral Coefficients)**:
+   - Extracts key audio features, such as frequency and intensity, for numerical analysis.
+
+---
+
+## **5. Comparison of Techniques**
+
+| **Technique**       | **Handles Word Order** | **Captures Semantics** | **Dimensionality** | **Context Aware** |
+| ------------------- | ---------------------- | ---------------------- | ------------------ | ----------------- |
+| One-Hot Encoding    | No                     | No                     | High               | No                |
+| Bag-of-Words        | No                     | No                     | Moderate           | No                |
+| TF-IDF              | No                     | Partially              | Moderate           | No                |
+| Word2Vec            | No                     | Yes                    | Low                | No                |
+| Transformers (BERT) | Yes                    | Yes                    | Moderate           | Yes               |
+
+---
+
+## **6. Conclusion**
+
+Data representation techniques evolve in complexity and capability:
+
+1. **Simple Methods**:
+
+   - One-Hot Encoding, Bag-of-Words → Simple and interpretable but limited.
+
+2. **Advanced Embeddings**:
+
+   - Word2Vec, GloVe → Capture word semantics but lack context.
+
+3. **Contextual Embeddings**:
+   - Transformers → Capture semantics **and** context, making them ideal for modern NLP.
+
+The choice of technique depends on the task's requirements, computational resources, and desired accuracy.
 
 </details>
