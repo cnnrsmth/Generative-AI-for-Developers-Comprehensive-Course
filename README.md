@@ -1000,3 +1000,272 @@ For a movie-synopsis generator:
    - Conduct ongoing tests to ensure performance consistency across updates.
 
 </details>
+
+<details>
+<summary>Practical: IMDB Dataset Preprocessing and Embeddings</summary>
+
+### Dataset: IMDB Movie Reviews
+
+- **Dataset Source:** [IMDB Dataset on Kaggle](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews)
+- **Description:**
+  - The IMDB dataset contains 50,000 movie reviews for binary sentiment classification.
+  - It is split into:
+    - 25,000 reviews for training.
+    - 25,000 reviews for testing.
+  - Each review is labeled as **positive** or **negative**.
+  - It is widely used for benchmarking natural language processing (NLP) models.
+
+---
+
+### Step 1: Setting Up the Environment
+
+**What I Did:**
+
+1. Set up the coding environment using **VSCode** with Jupyter Notebook (`.ipynb`) code cells.
+2. Created a **virtual environment**:
+   - Installed necessary libraries such as `pandas`, `nltk`, and `textblob`.
+3. Configured the **Kaggle API** to download datasets programmatically.
+
+**Why It’s Done:**
+
+- **Virtual Environments:** Ensure isolation of dependencies, preventing conflicts between projects.
+- **Kaggle API:** Automates the process of downloading datasets, saving time and ensuring reproducibility.
+
+---
+
+### Step 2: Downloading and Extracting the Dataset
+
+**What I Did:**
+
+1. Downloaded the IMDB dataset using the Kaggle API.
+2. Extracted the dataset into the working directory.
+3. Loaded the dataset into a Pandas DataFrame:
+   ```python
+   import pandas as pd
+   df = pd.read_csv('IMDB Dataset.csv')
+   print(df.head())
+   ```
+
+**Why It’s Done:**
+
+- Loading the dataset into a DataFrame makes it easier to preview, manipulate, and preprocess the data.
+
+---
+
+### Step 3: Preprocessing the Data
+
+**Overview:**
+Preprocessing cleans and standardizes raw text data, ensuring it is ready for embeddings and downstream NLP tasks.
+
+---
+
+#### 1. Lowercasing the Text
+
+**What I Did:**
+
+- Converted all text in the DataFrame to lowercase:
+  ```python
+  df['review'] = df['review'].str.lower()
+  ```
+
+**Why It’s Done:**
+
+- Lowercasing ensures consistency, as models treat "Movie" and "movie" as different tokens.
+- Reduces vocabulary size, which improves model efficiency.
+
+#### 2. Removing HTML Tags
+
+**What I Did:**
+
+- Removed HTML tags using a regular expression
+
+**Why It’s Done:**
+
+- HTML tags add noise to the dataset. Removing them ensures only meaningful text remains.
+
+#### 4. Removing Stopwords
+
+**What I Did:**
+
+- Filtered out common stopwords (e.g., "the," "is," "and") from the text.
+
+**Why It’s Done:**
+
+- Stopwords are frequent words that carry little meaning for tasks like sentiment analysis.
+- Removing them reduces the size of the vocabulary, making models more efficient and focused on meaningful words.
+
+---
+
+#### 5. Tokenization
+
+**What I Did:**
+
+- Split the text into individual tokens (words) using various tokenization techniques.
+
+**Why It’s Done:**
+
+- Tokenization is the process of breaking down a piece of text into smaller units, such as words or phrases, known as tokens. This step is essential because machine learning models process numerical representations of tokens rather than raw text.
+- Different techniques were used for tokenization depending on the context:
+
+  - **String Splitting:** The simplest method, splitting text by spaces, is fast but fails to handle punctuation or complex cases (e.g., "don't" or "Mr.").
+  - **Regular Expressions:** Used to define patterns for more advanced tokenization, such as separating words and removing unwanted characters like punctuation or special symbols.
+  - **NLTK's Word Tokenizer:** A robust and pre-trained tokenizer from the NLTK library that handles edge cases, such as punctuation, contractions, and abbreviations.
+
+- **Why These Techniques Were Used:**
+  - String splitting was used for basic scenarios, but its limitations made regular expressions and pre-built tokenizers (like NLTK) more reliable for complex data.
+  - NLTK's `word_tokenize` was preferred for its accuracy and ability to handle diverse input formats, ensuring clean and meaningful tokens for downstream tasks.
+
+---
+
+#### 6. Stemming
+
+**What I Did:**
+
+- Used the **Porter Stemmer** from the NLTK library to reduce words to their root forms.
+- Applied stemming to text, simplifying words like "walking," "walked," and "walks" to "walk."
+
+**Why It’s Done:**
+
+- Stemming reduces inflected words to their base or root form, which helps in:
+  - Reducing the overall vocabulary size.
+  - Grouping similar words together for improved model performance.
+- For example, words like "running," "ran," and "runs" are all normalized to "run," making the text easier for machine learning models to process.
+
+---
+
+**Types of Stemming Methods:**
+
+1. **Porter Stemmer**:
+
+   - A rule-based stemming algorithm that applies heuristic rules to strip suffixes.
+   - Efficient and widely used for text preprocessing tasks.
+
+2. **Lancaster Stemmer**:
+
+   - A more aggressive stemmer that often over-stems words.
+   - For example, "universal" might be reduced to "uni."
+
+3. **Snowball Stemmer**:
+   - An improved version of the Porter Stemmer (also called "Porter2").
+   - Supports multiple languages, making it versatile for multilingual text.
+
+---
+
+**Pros and Cons of Stemming:**
+
+- **Pros**:
+
+  - Computationally efficient and faster than lemmatization.
+  - Reduces text complexity and vocabulary size, improving model efficiency.
+
+- **Cons**:
+  - May produce non-readable stems (e.g., "probably" → "probabl").
+  - Lacks contextual understanding, as it simply strips suffixes.
+
+**When to Use Stemming**:
+
+- Stemming is ideal for tasks like **information retrieval** or **text classification**, where efficiency and simplicity are more important than word readability.
+
+---
+
+#### 7. Lemmatization
+
+**What I Did:**
+
+- Applied **Lemmatization** using the `WordNetLemmatizer` from the NLTK library.
+- Processed a sentence to convert words to their base (dictionary) forms while preserving their meaning.
+
+**Why It’s Done:**
+
+- Lemmatization reduces words to their **dictionary (lemma)** form rather than just stripping suffixes.
+- Unlike stemming, lemmatization produces **readable and valid words**. For example:
+  - "running" → "run"
+  - "eating" → "eat"
+  - "was" → "be"
+
+---
+
+**Techniques Used:**
+
+1. **WordNet Lemmatizer**:
+
+   - Based on the **WordNet lexical database**, which provides linguistic relationships between words.
+   - Requires the **part of speech (POS)** to achieve accurate results. Common POS tags:
+     - `'n'` for nouns
+     - `'v'` for verbs
+     - `'a'` for adjectives
+   - Example:
+     - Without POS: "running" → "running" (default to noun)
+     - With POS: "running" → "run" (correct as a verb)
+
+2. **Token Filtering**:
+   - Words like **punctuations** and stopwords were removed before lemmatization to ensure only meaningful tokens are processed.
+
+---
+
+**Other Lemmatization Techniques:**
+
+1. **SpaCy Lemmatizer**:
+
+   - A modern and highly efficient lemmatizer included in SpaCy.
+   - Supports multiple languages and automatically identifies POS tags during tokenization.
+
+2. **Stanford Lemmatizer**:
+   - A robust lemmatizer based on Stanford's NLP library, often used for large-scale text processing tasks.
+
+---
+
+#### Comparing Stemming vs. Lemmatization
+
+| Feature         | Stemming                                                          | Lemmatization                                                         |
+| --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Definition**  | Reduces words to root forms by applying rules (suffix stripping). | Reduces words to dictionary (lemma) form based on linguistic meaning. |
+| **Example**     | "running" → "run" / "studies" → "studi"                           | "running" → "run" / "studies" → "study"                               |
+| **Readability** | Often produces non-readable words (e.g., "probabl").              | Produces valid, readable words.                                       |
+| **Accuracy**    | Less accurate, as it ignores context.                             | Context-aware, requiring POS for precision.                           |
+| **Speed**       | Faster (rule-based, no context analysis).                         | Slower (requires dictionary lookups).                                 |
+| **Usage**       | Useful for tasks where speed matters, like search engines.        | Preferred for NLP tasks requiring correct grammar and meaning.        |
+
+---
+
+**When to Use Lemmatization vs. Stemming:**
+
+- Use **stemming** when:
+  - Speed is critical.
+  - Accuracy and readability are less important.
+- Use **lemmatization** when:
+  - Text interpretability is required.
+  - Context and meaning must be preserved (e.g., chatbots, language models, text summarization).
+
+---
+
+**Key Takeaway:**
+While lemmatization is slower than stemming, it is preferred for tasks that require linguistic precision and readable output. Stemming, on the other hand, is more efficient for simpler tasks like search indexing or where speed is a priority.
+
+---
+
+#### Conclusion
+
+Preprocessing is a critical step in any Natural Language Processing (NLP) pipeline. By applying techniques such as **lowercasing**, **HTML/URL removal**, **stopword filtering**, **tokenization**, **stemming**, and **lemmatization**, the text is cleaned and standardized, ensuring it is ready for embeddings and downstream machine learning tasks.
+
+- **Stemming** simplifies words by stripping suffixes but may produce unreadable roots.
+- **Lemmatization** ensures linguistically correct, readable roots but at a computational cost.
+
+The choice between stemming and lemmatization depends on the task requirements, balancing **speed** and **accuracy**.
+
+---
+
+### Files Referenced
+
+1. **Dataset File**
+
+   - [IMDB Dataset.csv](../data/IMDB%20Dataset.csv)
+
+2. **Notebooks**
+   - [Text Preprocessing with NLTK](../Notebooks/text-preprocessing-nltk.ipynb)
+   - [Text Preprocessing Part 1](../Notebooks/text-preprocessing-part-1.ipynb)
+   - [Text Preprocessing Part 2](../Notebooks/text-preprocessing-part-2.ipynb)
+
+---
+
+</details>
